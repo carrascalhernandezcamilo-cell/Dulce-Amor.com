@@ -1,0 +1,686 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>DULCE AMOR (Login · Cliente · Admin)</title>
+  <style>
+    :root{
+      --accent:#ff6aa6;
+      --accent-dark:#e05585;
+      --muted:#6b7280;
+      --card:#fff;
+      --shadow: 0 10px 30px rgba(16,24,40,0.08);
+      --wa: #25D366;
+      --max-width:1100px;
+    }
+
+    *{box-sizing:border-box}
+    body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial;margin:0;background:linear-gradient(#fff7fb,#fff);color:#111}
+    header{background:var(--accent);color:white;padding:18px 16px;text-align:center;font-weight:800}
+    .container{max-width:var(--max-width);margin:20px auto;padding:16px}
+
+    /* Login box */
+    .login-card{max-width:480px;margin:30px auto;padding:20px;border-radius:12px;background:var(--card);box-shadow:var(--shadow)}
+    .login-card h2{margin:0 0 8px}
+    .field{margin-top:12px}
+    select,input,textarea,button{font-family:inherit}
+    input[type="text"], input[type="password"], input[type="number"], textarea, select {
+      width:100%;padding:10px;border-radius:8px;border:1px solid #e6e6e6;margin-top:6px;
+    }
+    .btn {display:inline-block;padding:10px 14px;border-radius:8px;border:0;background:var(--accent);color:#fff;cursor:pointer;font-weight:700}
+    .btn.ghost{background:transparent;color:#111;border:1px solid rgba(0,0,0,0.06)}
+    .btn.wa{background:var(--wa);display:block;text-align:center;color:#fff;padding:10px;border-radius:8px;text-decoration:none;margin-top:12px}
+    .muted{color:var(--muted);font-size:13px}
+
+    .layout{display:flex;gap:20px;height:70vh}
+    .sidebar{width:260px;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow);overflow:auto}
+    .content{flex:1;background:var(--card);border-radius:12px;padding:16px;box-shadow:var(--shadow);overflow:auto}
+
+    .cat-item{padding:10px;border-radius:8px;cursor:pointer;margin-bottom:8px;border:1px solid transparent}
+    .cat-item:hover{background:#fff0f6}
+    .cat-active{background:linear-gradient(90deg,var(--accent),#ff9acb);color:white;border:none}
+
+    .product{display:flex;gap:16px;border-radius:10px;padding:12px;border:1px solid #eee;margin-bottom:12px;align-items:center}
+    .product img{width:140px;height:100px;object-fit:cover;border-radius:8px;border:1px solid #eee}
+    .product .info{flex:1}
+    .product .actions{display:flex;flex-direction:column;gap:8px}
+
+    .admin-panel .small{display:inline-block;padding:6px 8px;border-radius:8px;border:1px solid #eee;background:#fafafa;margin-right:6px;font-size:13px}
+
+    .topbar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+    .hidden{display:none}
+
+    /* modal */
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:60}
+    .modal{background:white;padding:16px;border-radius:12px;width:100%;max-width:540px;box-shadow:0 30px 60px rgba(0,0,0,0.4)}
+    .row{display:flex;gap:12px;align-items:center}
+
+    footer{opacity:.9;text-align:center;color:var(--muted);padding:14px;margin-top:18px}
+    .small-muted{font-size:13px;color:var(--muted)}
+    .logo{height:48px;border-radius:10px;object-fit:contain;background:white;padding:6px}
+    .TituloDulceAmor {
+      width: 100%;
+      padding: 10px 0;
+      border:#111;
+      border-radius: 1px;
+    }
+
+    .header-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;  /* Centra el título */
+      position: relative;       /* Para posicionar el logo */
+    }
+
+    .logo {
+      position: absolute;
+      left: 30px;               /* Logo arriba izquierda */
+      width: 60px;
+      height: auto;
+      border: none;       /* elimina cualquier borde */
+      background: none;   /* quita fondo si lo hubiera */
+      object-fit: contain; /* mantiene proporciones sin recortar */
+
+      }
+
+    .titulo {
+      font-family: "Chewy", serif;
+      font-size: 45px;
+      color: #f3f2f2;
+
+    }
+    .Bienvenida_login{
+      font-family: "Chewy",serif;
+      font-size: 15px;
+    }
+    
+  </style>
+</head>
+<body>
+ <header class="TituloDulceAmor">
+  <div class="header-container">
+    <img src="/Users/ASUS/Downloads/logo mami.jpg" alt="logo" class="logo">
+    <span class="titulo">DULCE AMOR</span>
+  </div>
+</header>
+
+  <div class="container" id="root">
+
+    <!-- LOGIN -->
+    <div id="viewLogin" class="login-card">
+      <h2>Bienvenido — Inicia sesión</h2>
+      <div class="field">
+        <label class="muted">¿Eres cliente o administrador?</label>
+        <select id="tipo" aria-label="tipo usuario">
+          <option value="cliente">Cliente</option>
+          <option value="admin">Administrador</option>
+        </select>
+      </div>
+
+      <div class="field hidden" id="passBox">
+        <label class="muted">Contraseña administrador</label>
+        <input id="adminPass" type="password" placeholder="Contraseña" />
+      </div>
+
+      <div class="field" style="display:flex;gap:10px">
+        <button class="btn" id="enterBtn">Entrar</button>
+        <button class="btn ghost" id="btnReset">Reset datos</button>
+      </div>
+
+      <a class="btn wa" id="waLogin" href="https://wa.me/573167435758" target="_blank">Contactar por WhatsApp — 316 743 5758</a>
+      <p class="muted" style="margin-top:10px"> <h1 class="Bienvenida_login">BIENVENIDOS A LA TIENDA VIRTUAL DULCE AMOR</h1>
+    </div>
+
+    <!-- CLIENTE -->
+    <div id="viewCliente" class="hidden">
+      <div class="topbar">
+        <div style="display:flex;gap:12px;align-items:center">
+          <button class="btn ghost" id="btnCerrarCliente">Cerrar sesión</button>
+          <div class="small-muted">Sesión: Cliente</div>
+        </div>
+        <div>
+          <a class="btn wa" id="waCliente" href="https://wa.me/573167435758" target="_blank">WhatsApp</a>
+        </div>
+      </div>
+
+      <div class="layout">
+        <aside class="sidebar">
+          <h3>Categorías</h3>
+          <div id="catsCliente"></div>
+        </aside>
+
+        <main class="content">
+          <h2>Productos</h2>
+          <div id="productosCliente"></div>
+        </main>
+      </div>
+    </div>
+
+    <!-- ADMIN -->
+    <div id="viewAdmin" class="hidden">
+      <div class="topbar">
+        <div style="display:flex;align-items:center;gap:12px">
+          <button class="btn ghost" id="btnCerrarAdmin">Cerrar sesión</button>
+          <div class="small-muted">Sesión: Administrador</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn" onclick="showAdminPanel('categorias')">Categorías</button>
+          <button class="btn" onclick="showAdminPanel('productos')">Productos</button>
+          <a class="btn wa" id="waAdmin" href="https://wa.me/573167435758" target="_blank">WhatsApp</a>
+        </div>
+      </div>
+
+      <div class="layout">
+        <aside class="sidebar">
+          <h3>Vista rápida categorías</h3>
+          <div id="catsAdmin"></div>
+        </aside>
+
+        <main class="content admin-panel">
+          <!-- Panel Categorías -->
+          <section id="panelCategorias" class="hidden">
+            <h2>Categorías (imagen + descripción)</h2>
+            <div style="display:flex;gap:10px;align-items:center">
+              <input id="catNombre" placeholder="Nombre categoría" style="width:40%" />
+              <input id="catImg" placeholder="URL imagen (opcional)" style="width:40%" />
+            </div>
+            <div style="margin-top:8px">
+              <textarea id="catDesc" placeholder="Descripción categoría (opcional)" style="width:80%;height:70px"></textarea>
+            </div>
+            <div style="margin-top:8px">
+              <button class="btn" onclick="createCategory()">Crear categoría</button>
+            </div>
+
+            <h3 style="margin-top:14px">Categorías existentes</h3>
+            <div id="listCatsAdmin"></div>
+          </section>
+
+          <!-- Panel Productos -->
+          <section id="panelProductos" class="hidden">
+            <h2>Agregar / Editar Producto</h2>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:start">
+              <div>
+                <input id="pNombre" placeholder="Nombre" />
+                <input id="pPrecio" placeholder="Precio" style="margin-top:8px" />
+                <input id="pImgFile" type="file" accept="image/*" style="margin-top:8px" />
+                <div class="muted" style="margin-top:6px">O pega URL en el siguiente campo:</div>
+                <input id="pImgUrl" placeholder="URL imagen (opcional)" style="margin-top:8px" />
+              </div>
+
+              <div>
+                <label class="muted">Categoría</label>
+                <select id="pCategoria" style="width:100%;padding:8px;border-radius:8px;border:1px solid #eee;margin-top:8px"></select>
+                <textarea id="pDesc" placeholder="Descripción" style="height:120px;margin-top:8px"></textarea>
+                <div style="margin-top:8px;display:flex;gap:8px">
+                  <button class="btn" id="btnAddProd">Agregar producto</button>
+                  <button class="btn ghost" id="btnCancelEdit" style="display:none">Cancelar edición</button>
+                </div>
+              </div>
+            </div>
+
+            <h3 style="margin-top:14px">Productos</h3>
+            <div id="listProdsAdmin"></div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>© <span id="year"></span> DULCE AMOR </footer>
+
+  <!-- MODAL COMPRA (cliente) -->
+  <div id="modalComprar" class="hidden">
+    <!-- will be created dynamically -->
+  </div>
+
+<script>
+/* ==========================
+   Datos iniciales y Storage
+   ========================== */
+const STORAGE_KEY = 'dulceamor_store_v1';
+const ADMIN_PASS = 'Lexy2781';
+const WA_NUMBER = '573167435758'; // with country code
+document.getElementById('year').textContent = new Date().getFullYear();
+
+let store = {
+  categories: [
+    { id: id(), name: 'Desayunos', img: '', desc: 'Deliciosos desayunos sorpresa' },
+    { id: id(), name: 'Flores', img: '', desc: 'Arreglos y ramos' },
+    { id: id(), name: 'Detalles', img: '', desc: 'Pequeños detalles y peluches' }
+  ],
+  products: [
+    // ejemplo: { id:id(), name:'Bandeja', price:'65000', img:'...', categoryId:..., desc:'...' }
+  ]
+};
+
+function loadStore(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw) store = JSON.parse(raw);
+  }catch(e){
+    console.error('fallo cargar store', e);
+  }
+}
+function saveStore(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
+}
+loadStore();
+
+/* ==========================
+   Helpers
+   ========================== */
+function id(){ try{ return crypto.randomUUID(); }catch(e){ return Date.now().toString(36)+Math.random().toString(36).slice(2,6); } }
+function qs(sel){ return document.querySelector(sel) }
+function qsa(sel){ return Array.from(document.querySelectorAll(sel)) }
+function show(viewId){
+  ['viewLogin','viewCliente','viewAdmin'].forEach(v=> document.getElementById(v).classList.add('hidden'));
+  document.getElementById(viewId).classList.remove('hidden');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+/* ==========================
+   LOGIN
+   ========================== */
+const tipo = document.getElementById('tipo');
+const passBox = document.getElementById('passBox');
+tipo.addEventListener('change', ()=> {
+  passBox.classList.toggle('hidden', tipo.value !== 'admin');
+});
+
+document.getElementById('enterBtn').addEventListener('click', ()=> {
+  const t = tipo.value;
+  if(t === 'cliente'){
+    openCliente();
+    return;
+  }
+  const value = document.getElementById('adminPass').value;
+  if(value !== ADMIN_PASS){ alert('Contraseña incorrecta'); return; }
+  openAdmin();
+});
+
+document.getElementById('btnReset').addEventListener('click', ()=> {
+  if(!confirm('Restaurar datos locales (borrará tus cambios)?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+});
+
+/* ==========================
+   VISTAS: Cliente
+   ========================== */
+function openCliente(){
+  show('viewCliente');
+  renderCategoriasCliente();
+  renderProductosCliente();
+}
+
+document.getElementById('btnCerrarCliente').addEventListener('click', ()=> {
+  // limpiar inputs y volver a login
+  clearLoginInputs();
+  show('viewLogin');
+});
+
+/* ==========================
+   VISTAS: Admin
+   ========================== */
+function openAdmin(){
+  show('viewAdmin');
+  showAdminPanel('categorias');
+  renderCategoriasAdmin();
+  renderCategoriasQuick();
+  renderProductosAdmin();
+}
+
+document.getElementById('btnCerrarAdmin').addEventListener('click', ()=> {
+  clearLoginInputs();
+  show('viewLogin');
+});
+
+function clearLoginInputs(){
+  document.getElementById('adminPass').value = '';
+  document.getElementById('tipo').value = 'cliente';
+  passBox.classList.add('hidden');
+}
+
+/* ==========================
+   RENDER: Cliente
+   ========================== */
+function renderCategoriasCliente(){
+  const out = document.getElementById('catsCliente');
+  out.innerHTML = '';
+  store.categories.forEach(cat=>{
+    const d = document.createElement('div');
+    d.className = 'cat-item';
+    d.innerHTML = `
+      <div style="display:flex;gap:8px;align-items:center">
+        ${cat.img ? `<img src="${cat.img}" style="width:44px;height:44px;object-fit:cover;border-radius:8px;border:1px solid #eee"/>` : ''}
+        <div>
+          <div style="font-weight:700">${escapeHtml(cat.name)}</div>
+          <div class="muted" style="font-size:12px">${escapeHtml(cat.desc||'')}</div>
+        </div>
+      </div>
+    `;
+    d.addEventListener('click', ()=> renderProductosCliente(cat.id));
+    out.appendChild(d);
+  });
+}
+
+function renderProductosCliente(categoryId){
+  const out = document.getElementById('productosCliente');
+  out.innerHTML = '';
+  const prods = categoryId ? store.products.filter(p=>p.categoryId===categoryId) : store.products;
+  if(prods.length===0) out.innerHTML = '<div class="muted">No hay productos en esta categoría.</div>';
+  prods.forEach((p,i)=>{
+    const div = document.createElement('div');
+    div.className = 'product';
+    div.innerHTML = `
+      <img src="${escapeHtml(p.img||'https://via.placeholder.com/300x200?text=Sin+imagen')}" alt="">
+      <div class="info">
+        <h3 style="margin:0">${escapeHtml(p.name)}</h3>
+        <div class="muted" style="margin-top:6px">${escapeHtml(p.desc||'')}</div>
+        <div style="margin-top:8px;font-weight:800;color:var(--accent)">$${escapeHtml(p.price)}</div>
+      </div>
+      <div class="actions">
+        <button class="btn" onclick="openComprar('${p.id}')">Comprar</button>
+      </div>
+    `;
+    out.appendChild(div);
+  });
+}
+
+/* ==========================
+   MODAL COMPRA -> Cliente
+   ========================== */
+function openComprar(prodId){
+  const prod = store.products.find(p=>p.id===prodId);
+  if(!prod){ alert('Producto no encontrado'); return; }
+
+  // build modal
+  const bg = document.createElement('div'); bg.className='modal-bg';
+  const box = document.createElement('div'); box.className='modal';
+  box.innerHTML = `
+    <h3>Comprar: ${escapeHtml(prod.name)}</h3>
+    <p class="muted">Precio: $${escapeHtml(prod.price)}</p>
+    <div style="margin-top:8px">
+      <label>Dirección</label>
+      <input id="mDireccion" placeholder="Calle, carrera, número" />
+    </div>
+    <div style="margin-top:8px">
+      <label>Barrio</label>
+      <input id="mBarrio" placeholder="Barrio" />
+    </div>
+    <div style="margin-top:8px">
+      <label>Teléfono</label>
+      <input id="mTelefono" placeholder="Ej: 3001234567" />
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:12px">
+      <button class="btn ghost" id="mCancel">Cancelar</button>
+      <button class="btn" id="mSend">Enviar por WhatsApp</button>
+    </div>
+  `;
+  bg.appendChild(box);
+  document.body.appendChild(bg);
+
+  document.getElementById('mCancel').onclick = ()=> bg.remove();
+  document.getElementById('mSend').onclick = ()=>{
+    const dir = document.getElementById('mDireccion').value.trim();
+    const bar = document.getElementById('mBarrio').value.trim();
+    const tel = document.getElementById('mTelefono').value.trim();
+    if(!dir || !bar || !tel) return alert('Completa dirección, barrio y teléfono');
+    const msg = `Hola,%20quiero%20comprar:%20${encodeURIComponent(prod.name)}%0APrecio:%20$${encodeURIComponent(prod.price)}%0ADirección:%20${encodeURIComponent(dir)}%0ABarrio:%20${encodeURIComponent(bar)}%0ATeléfono:%20${encodeURIComponent(tel)}`;
+    window.open(`https://wa.me/${WA_NUMBER}?text=${msg}`,'_blank');
+    bg.remove();
+  };
+}
+
+/* ==========================
+   RENDER: Admin (categorías & quick view)
+   ========================== */
+function renderCategoriasAdmin(){
+  const box = document.getElementById('listCatsAdmin');
+  box.innerHTML = '';
+  store.categories.forEach((c,i)=>{
+    const el = document.createElement('div');
+    el.style = "border:1px solid #eee;padding:10px;margin-bottom:8px;border-radius:8px;display:flex;gap:10px;align-items:center";
+    el.innerHTML = `
+      ${c.img ? `<img src="${escapeHtml(c.img)}" style="width:86px;height:64px;object-fit:cover;border-radius:6px"/>` : ''}
+      <div style="flex:1">
+        <div style="font-weight:800">${escapeHtml(c.name)}</div>
+        <div class="muted">${escapeHtml(c.desc||'')}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button class="btn ghost" onclick="startEditCategory('${c.id}')">Editar</button>
+        <button class="btn" style="background:#ef4444" onclick="deleteCategory('${c.id}')">Eliminar</button>
+      </div>
+    `;
+    box.appendChild(el);
+  });
+}
+function renderCategoriasQuick(){
+  const out = document.getElementById('catsAdmin');
+  out.innerHTML = '';
+  store.categories.forEach(c=>{
+    const d = document.createElement('div'); d.className='cat-item';
+    d.innerHTML = `${c.img ? `<img src="${escapeHtml(c.img)}" style="width:44px;height:44px;object-fit:cover;border-radius:6px;margin-right:8px"/>` : ''}<strong>${escapeHtml(c.name)}</strong>`;
+    out.appendChild(d);
+  });
+}
+
+/* ==========================
+   Admin: categorías create/edit/delete
+   ========================== */
+let editingCategoryId = null;
+function createCategory(){
+  const nombre = document.getElementById('catNombre').value.trim();
+  const img = document.getElementById('catImg').value.trim();
+  const desc = document.getElementById('catDesc').value.trim();
+  if(!nombre) return alert('Escribe nombre de categoría');
+
+  if(editingCategoryId){
+    // editar existente
+    const c = store.categories.find(x=>x.id===editingCategoryId);
+    if(!c) return alert('Categoría no encontrada');
+    c.name = nombre; c.img = img; c.desc = desc;
+    editingCategoryId = null;
+    document.getElementById('btnAddProd').textContent = 'Agregar producto';
+  } else {
+    store.categories.push({ id: id(), name: nombre, img: img, desc: desc });
+  }
+  document.getElementById('catNombre').value='';
+  document.getElementById('catImg').value='';
+  document.getElementById('catDesc').value='';
+  saveStore();
+  renderCategoriasAdmin();
+  renderCategoriasQuick();
+  updateCategorySelect();
+  renderCategoriasCliente();
+}
+
+function startEditCategory(catId){
+  const c = store.categories.find(x=>x.id===catId);
+  if(!c) return;
+  editingCategoryId = c.id;
+  document.getElementById('catNombre').value = c.name;
+  document.getElementById('catImg').value = c.img||'';
+  document.getElementById('catDesc').value = c.desc||'';
+  window.scrollTo({top:document.getElementById('panelCategorias').offsetTop - 20, behavior:'smooth'});
+}
+
+function deleteCategory(catId){
+  if(!confirm('Eliminar categoría y TODOS los productos dentro de ella?')) return;
+  // eliminar productos asociados
+  store.products = store.products.filter(p => p.categoryId !== catId);
+  // eliminar categoría
+  store.categories = store.categories.filter(c => c.id !== catId);
+  saveStore();
+  renderCategoriasAdmin();
+  renderCategoriasQuick();
+  updateCategorySelect();
+  renderProductosCliente();
+  renderProductosAdmin();
+}
+
+/* ==========================
+   Admin: Productos create/edit/delete
+   ========================== */
+let editingProductId = null;
+
+function updateCategorySelect(){
+  const sel = document.getElementById('pCategoria');
+  sel.innerHTML = '';
+  store.categories.forEach(c => sel.innerHTML += `<option value="${c.id}">${escapeHtml(c.name)}</option>`);
+}
+updateCategorySelect();
+
+document.getElementById('pImgFile').addEventListener('change', async (e)=>{
+  const f = e.target.files[0];
+  if(!f) return;
+  const data = await readFileAsDataURL(f);
+  document.getElementById('pImgUrl').value = data; // prefer file over URL
+});
+
+function readFileAsDataURL(file){
+  return new Promise((res,rej)=>{
+    const r = new FileReader();
+    r.onload = ()=> res(r.result);
+    r.onerror = rej;
+    r.readAsDataURL(file);
+  });
+}
+
+document.getElementById('btnAddProd').addEventListener('click', ()=> {
+  const name = document.getElementById('pNombre').value.trim();
+  const price = document.getElementById('pPrecio').value.trim();
+  const img = document.getElementById('pImgUrl').value.trim();
+  const categoryId = document.getElementById('pCategoria').value;
+  const desc = document.getElementById('pDesc').value.trim();
+
+  if(!name || !price || !categoryId) return alert('Completa nombre, precio y categoría');
+
+  if(editingProductId){
+    const p = store.products.find(x=>x.id===editingProductId);
+    if(!p) return alert('Producto no encontrado');
+    p.name = name; p.price = price; p.img = img; p.categoryId = categoryId; p.desc = desc;
+    editingProductId = null;
+    document.getElementById('btnAddProd').textContent = 'Agregar producto';
+    document.getElementById('btnCancelEdit').style.display = 'none';
+  } else {
+    store.products.push({ id: id(), name, price, img, categoryId, desc });
+  }
+
+  // limpiar
+  document.getElementById('pNombre').value = '';
+  document.getElementById('pPrecio').value = '';
+  document.getElementById('pImgUrl').value = '';
+  document.getElementById('pDesc').value = '';
+  document.getElementById('pImgFile').value = '';
+
+  saveStore();
+  renderProductosAdmin();
+  renderProductosCliente();
+  updateCategorySelect();
+});
+
+document.getElementById('btnCancelEdit').addEventListener('click', ()=>{
+  editingProductId = null;
+  document.getElementById('btnAddProd').textContent = 'Agregar producto';
+  document.getElementById('btnCancelEdit').style.display = 'none';
+  document.getElementById('pNombre').value = '';
+  document.getElementById('pPrecio').value = '';
+  document.getElementById('pImgUrl').value = '';
+  document.getElementById('pDesc').value = '';
+  document.getElementById('pImgFile').value = '';
+});
+
+function renderProductosAdmin(){
+  const box = document.getElementById('listProdsAdmin');
+  box.innerHTML = '';
+  if(store.products.length===0) box.innerHTML = '<div class="muted">No hay productos aún</div>';
+  store.products.forEach((p,i)=>{
+    const cat = store.categories.find(c=>c.id===p.categoryId);
+    const el = document.createElement('div');
+    el.style = "border:1px solid #eee;padding:10px;margin-bottom:8px;border-radius:8px;display:flex;align-items:center;gap:12px";
+    el.innerHTML = `
+      <img src="${escapeHtml(p.img||'https://via.placeholder.com/200x140?text=Sin+imagen')}" style="width:120px;height:80px;object-fit:cover;border-radius:6px"/>
+      <div style="flex:1">
+        <div style="font-weight:800">${escapeHtml(p.name)} <span class="small-muted">(${escapeHtml(cat?cat.name:'Sin categoría')})</span></div>
+        <div class="muted">${escapeHtml(p.desc||'')}</div>
+        <div style="margin-top:6px;font-weight:800;color:var(--accent)">$${escapeHtml(p.price)}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <button class="btn ghost" onclick="startEditProduct('${p.id}')">Editar</button>
+        <button class="btn" style="background:#ef4444" onclick="deleteProduct('${p.id}')">Eliminar</button>
+      </div>
+    `;
+    box.appendChild(el);
+  });
+}
+
+function startEditProduct(prodId){
+  const p = store.products.find(x=>x.id===prodId);
+  if(!p) return alert('Producto no encontrado');
+  editingProductId = p.id;
+  document.getElementById('pNombre').value = p.name;
+  document.getElementById('pPrecio').value = p.price;
+  document.getElementById('pImgUrl').value = p.img;
+  document.getElementById('pDesc').value = p.desc;
+  document.getElementById('pCategoria').value = p.categoryId;
+  document.getElementById('btnAddProd').textContent = 'Guardar cambios';
+  document.getElementById('btnCancelEdit').style.display = 'inline-block';
+  window.scrollTo({top:document.getElementById('panelProductos').offsetTop - 20, behavior:'smooth'});
+}
+
+function deleteProduct(prodId){
+  if(!confirm('Eliminar producto?')) return;
+  store.products = store.products.filter(p=>p.id!==prodId);
+  saveStore();
+  renderProductosAdmin();
+  renderProductosCliente();
+}
+
+/* ==========================
+   Admin: helpers panel swap
+   ========================== */
+function showAdminPanel(name){
+  document.getElementById('panelCategorias').classList.add('hidden');
+  document.getElementById('panelProductos').classList.add('hidden');
+  if(name === 'categorias') document.getElementById('panelCategorias').classList.remove('hidden');
+  if(name === 'productos') {
+    document.getElementById('panelProductos').classList.remove('hidden');
+    updateCategorySelect();
+  }
+}
+
+/* ==========================
+   Utility & init
+   ========================== */
+function escapeHtml(s){ if(!s && s!==0) return ''; return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+
+/* On load */
+(function init(){
+  // ensure category select etc.
+  updateCategorySelect();
+  renderCategoriasAdmin();
+  renderCategoriasQuick();
+  renderProductosAdmin();
+  renderProductosCliente();
+})();
+
+/* Expose some to global for inline onclick (simple approach) */
+window.openComprar = openComprar;
+window.startEditProduct = startEditProduct;
+window.deleteProduct = deleteProduct;
+window.startEditCategory = startEditCategory;
+window.deleteCategory = deleteCategory;
+window.showAdminPanel = showAdminPanel;
+window.createCategory = createCategory;
+
+/* Debug helper to ensure the login/return flow is fine */
+document.addEventListener('visibilitychange', ()=> {
+  // no-op, but useful to detect errors during testing
+});
+</script>
+</body>
+</html>
